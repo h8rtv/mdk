@@ -10,5 +10,8 @@ anyhow = "1.0.71"
 bollard = "0.14.0"
 clap = { version = "4.3.8", features = ["derive"] }
 futures-util = "0.3.28"
+home = "0.5.5"
+serde = "1.0.164"
+serde_yaml = "0.9.22"
 termion = "2.0.1"
 tokio = { version = "1.28.2", features = ["full"] }
