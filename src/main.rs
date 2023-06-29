@@ -142,22 +142,21 @@ async fn connect(docker: &Docker, container_name: &str) -> Result<()> {
 }
 
 async fn get_or_create_config() -> Result<MdkConfig> {
-    match home::home_dir() {
-        Some(homepath) => {
-            let filepath = homepath.join(".mdk");
-            if filepath.exists() {
-                let file = fs::read_to_string(filepath).await?;
-                Ok(serde_yaml::from_str(&file)?)
-            } else {
-                let cfg = MdkConfig {
-                    ..Default::default()
-                };
-                let cfg_str = serde_yaml::to_string(&cfg)?;
-                fs::write(filepath, cfg_str).await?;
-                Ok(cfg)
-            }
-        }
+    let filepath = match home::home_dir() {
+        Some(homepath) => Ok(homepath.join(".mdk")),
         None => Err(anyhow!("Couldn't find the home directory")),
+    }?;
+
+    if filepath.exists() {
+        let file = fs::read_to_string(filepath).await?;
+        Ok(serde_yaml::from_str(&file)?)
+    } else {
+        let cfg = MdkConfig {
+            ..Default::default()
+        };
+        let cfg_str = serde_yaml::to_string(&cfg)?;
+        fs::write(filepath, cfg_str).await?;
+        Ok(cfg)
     }
 }
 
